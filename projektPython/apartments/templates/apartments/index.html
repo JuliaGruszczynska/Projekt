@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apartments</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #1e6bae;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .apartment {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .apartment h2 {
+            margin-top: 0;
+        }
+
+        .apartment p {
+            margin-bottom: 10px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .navigation a {
+            color: white;
+            background-color: #1e6bae;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .favorite-btn {
+            background-color: #1e6bae;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .favorite-btn:hover {
+            background-color: #175591;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Apartments</h1>
+    </div>
+    <div class="navigation">
+        <a href="{% url 'favourites' %}">Favourite Apartments</a>
+    </div>
+    <div class="container">
+        {% if apartments %}
+            {% for apartment in apartments %}
+            <div class="apartment">
+                <h2>{{ apartment.place }}</h2>
+                <p>ID: {{ apartment.apartament_id }}</p>
+                <p>Description: {{ apartment.description }}</p>
+                <p>Price: {{ apartment.price }}</p>
+                <p>Area: {{ apartment.area }}</p>
+                <p>Price per sqm: {{ apartment.price_per_m }}</p>
+                <p>Rooms: {{ apartment.rooms }}</p>
+                <p>Offer URL: <a href="{{ apartment.offer_url }}">{{ apartment.offer_url }}</a></p>
+                <button class="favorite-btn" onclick="addToFavorites('{{ apartment.apartament_id }}')">Add to Favorites</button>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No apartments found.</p>
+        {% endif %}
+    </div>
+
+    <script>
+    function addToFavorites(apartmentId) {
+    fetch('/add-to-favorites/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ 'apartament_id': apartmentId, 'id': apartmentId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+    </script>
+</body>
+</html>

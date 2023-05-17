@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favourite Apartments</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #1e6bae;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .apartment {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .apartment h2 {
+            margin-top: 0;
+        }
+
+        .apartment p {
+            margin-bottom: 10px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .navigation a {
+            color: white;
+            background-color: #1e6bae;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Favourite Apartments</h1>
+    </div>
+    <div class="navigation">
+        <a href="{% url '' %}">All Apartments</a>
+    </div>
+    <div class="container">
+        {% if favourite_apartments %}
+            {% for favourite_apartment in favourite_apartments %}
+            <div class="apartment">
+                <h2>{{ favourite_apartment.apartament.place }}</h2>
+                <p>Description: {{ favourite_apartment.apartament.description }}</p>
+                <p>Price: {{ favourite_apartment.apartament.price }}</p>
+                <p>Area: {{ favourite_apartment.apartament.area }}</p>
+                <p>Price per sqm: {{ favourite_apartment.apartament.price_per_m }}</p>
+                <p>Rooms: {{ favourite_apartment.apartament.rooms }}</p>
+                <p>Offer URL: <a href="{{ favourite_apartment.apartament.offer_url }}">{{ favourite_apartment.apartament.offer_url }}</a></p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No favourite apartments found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
