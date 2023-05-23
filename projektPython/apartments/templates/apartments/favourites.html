@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Favourite Apartments</title>
     <style>
         body {
@@ -17,12 +18,42 @@
         }
 
         .header {
+                    position: sticky;
+            left: 0;
+            top: 0;
             background-color: #1e6bae;
-            padding: 20px;
+            padding: 10px;
+            padding-left: 20px;
             color: white;
-            text-align: center;
-            border-radius: 10px;
+            text-align: left;
+            border-radius:  0 0 20px 20px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            padding-left: 40px;
+        }
+
+        .navigation a {
+            color: #1e6bae;
+            background-color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .navigation a:hover {
+            color: white;
+            background-color: #0d518c;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
         }
 
         .apartment {
@@ -41,45 +72,121 @@
             margin-bottom: 10px;
         }
 
-        .navigation {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
+        .action-btn {
+            background-color: #1e6bae;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 50px;
+            width: 80px
+            text-align: center;
         }
 
-        .navigation a {
-            color: white;
-            background-color: #1e6bae;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 10px;
+        .action-btn:hover {
+            background-color: #175591;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: space-evenly;
+            gap: 100px;
+            padding-bottom: 30px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Favourite Apartments</h1>
-    </div>
-    <div class="navigation">
-        <a href="{% url '' %}">All Apartments</a>
+        <h1>Favourites Apartments</h1>
+        <div class="navigation">
+            <a href="{% url '' %}">All Apartments</a>
+        </div>
     </div>
     <div class="container">
         {% if favourite_apartments %}
             {% for favourite_apartment in favourite_apartments %}
             <div class="apartment">
                 <h2>{{ favourite_apartment.apartament.place }}</h2>
-                <p>Description: {{ favourite_apartment.apartament.description }}</p>
-                <p>Price: {{ favourite_apartment.apartament.price }}</p>
-                <p>Area: {{ favourite_apartment.apartament.area }}</p>
-                <p>Price per sqm: {{ favourite_apartment.apartament.price_per_m }}</p>
-                <p>Rooms: {{ favourite_apartment.apartament.rooms }}</p>
-                <p>Offer URL: <a href="{{ favourite_apartment.apartament.offer_url }}">{{ favourite_apartment.apartament.offer_url }}</a></p>
+                <div class="card-container">
+                    <div>
+                        <p>Description: {{ favourite_apartment.apartament.description }}</p>
+                        <p>Price: {{ favourite_apartment.apartament.price }}</p>
+                        <p>Area: {{ favourite_apartment.apartament.area }}</p>
+                    </div>
+                    <div>
+                        <p>Price per sqm: {{ favourite_apartment.apartament.price_per_m }}</p>
+                        <p>Rooms: {{ favourite_apartment.apartament.rooms }}</p>
+                        <p>Offer URL: <a href="{{ favourite_apartment.apartament.offer_url }}">{{ favourite_apartment.apartament.offer_url }}</a></p>
+                    </div>
+                    <div class="button-container">
+                        <button class="action-btn" onclick="removeFromFavorites('{{ favourite_apartment.id }}')">
+                            <span class="fa fa-heart-o">
+                            </span>
+                            <span>
+                                Remove from Favorites
+                            </span>
+                        </button>
+                        <button class="action-btn" onclick="sendEmail('{{ favourite_apartment.id }}')">
+                            <span class="fa fa-envelope-o"></span>
+                            <span>Send on email</span>
+                        </button>
+                    </div>
+                </div>
+
+
+
             </div>
             {% endfor %}
         {% else %}
             <p>No favourite apartments found.</p>
         {% endif %}
     </div>
+    <script>
+        function removeFromFavorites(apartmentId) {
+            fetch('/remove-from-favorites/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ 'id': apartmentId,})
+            })
+            .then(response => window.location.reload())
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+
+        function sendEmail(apartmentId) {
+          let email = prompt("Please enter your email:", "@gmail.com");
+          if (email == null || email == "") {
+            alert("User cancelled the prompt.");
+          } else {
+            fetch('/send-favorite-details/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(
+                {
+                'id': apartmentId,
+                'email': email
+                })
+            })
+            .then(response => window.location.reload())
+            .catch(error => {
+                console.error('Error:', error);
+            });
+          }
+        }
+    </script>
 </body>
 </html>

@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Apartments</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #f1f1f1;
+            background-color: #e3e1e1;
         }
 
         .container {
@@ -17,12 +18,42 @@
         }
 
         .header {
+            position: sticky;
+            left: 0;
+            top: 0;
             background-color: #1e6bae;
-            padding: 20px;
+            padding: 10px;
+            padding-left: 20px;
             color: white;
-            text-align: center;
-            border-radius: 10px;
+            text-align: left;
+            border-radius:  0 0 20px 20px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            padding-left: 40px;
+        }
+
+        .navigation a {
+            color: #1e6bae;
+            background-color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .navigation a:hover {
+            color: white;
+            background-color: #0d518c;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
         }
 
         .apartment {
@@ -41,20 +72,6 @@
             margin-bottom: 10px;
         }
 
-        .navigation {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .navigation a {
-            color: white;
-            background-color: #1e6bae;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
 
         .favorite-btn {
             background-color: #1e6bae;
@@ -63,34 +80,67 @@
             padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
+            height: 80px;
+            width: 80px
+            text-align: center;
         }
 
         .favorite-btn:hover {
             background-color: #175591;
         }
+
+        .card-container {
+            display: flex;
+            justify-content: space-evenly;
+            gap: 100px;
+            padding-bottom: 30px;
+        }
+        .button-container {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
-<body>
+<body >
     <div class="header">
         <h1>Apartments</h1>
+        <div class="navigation">
+            <a href="{% url 'favourites' %}">Favourite Apartments</a>
+        </div>
     </div>
-    <div class="navigation">
-        <a href="{% url 'favourites' %}">Favourite Apartments</a>
-    </div>
+
     <div class="container">
         {% if apartments %}
             {% for apartment in apartments %}
-            <div class="apartment">
-                <h2>{{ apartment.place }}</h2>
-                <p>ID: {{ apartment.apartament_id }}</p>
-                <p>Description: {{ apartment.description }}</p>
-                <p>Price: {{ apartment.price }}</p>
-                <p>Area: {{ apartment.area }}</p>
-                <p>Price per sqm: {{ apartment.price_per_m }}</p>
-                <p>Rooms: {{ apartment.rooms }}</p>
-                <p>Offer URL: <a href="{{ apartment.offer_url }}">{{ apartment.offer_url }}</a></p>
-                <button class="favorite-btn" onclick="addToFavorites('{{ apartment.apartament_id }}')">Add to Favorites</button>
-            </div>
+                <div class="apartment">
+                    <h2>{{ apartment.place }}</h2>
+                    <div class="card-container">
+                        <div>
+                            <p>Description: {{ apartment.description }}</p>
+                            <p>Price: {{ apartment.price }}</p>
+                            <p>Area: {{ apartment.area }}</p>
+                        </div>
+                        <div>
+                            <p>Price per sqm: {{ apartment.price_per_m }}</p>
+                            <p>Rooms: {{ apartment.rooms }}</p>
+                            <p>Offer URL: <a href="{{ apartment.offer_url }}">{{ apartment.offer_url }}</a></p>
+                        </div>
+                        <div class="button-container">
+                            <button class="favorite-btn" onclick="addToFavorites('{{ apartment.apartament_id }}')">
+                                <span class="fa fa-heart-o"></span>
+                                <br>
+                                <br>
+                                <span>
+                                    Add to Favorites
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
             {% endfor %}
         {% else %}
             <p>No apartments found.</p>
@@ -99,23 +149,22 @@
 
     <script>
     function addToFavorites(apartmentId) {
-    fetch('/add-to-favorites/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ 'apartament_id': apartmentId, 'id': apartmentId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
+        fetch('/add-to-favorites/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'apartament_id': apartmentId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
     </script>
 </body>
 </html>
