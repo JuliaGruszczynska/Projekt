@@ -99,6 +99,11 @@
             display: flex;
             align-items: center;
         }
+
+        .property {
+            font-weight: 800;
+        }
+
     </style>
 </head>
 <body >
@@ -116,7 +121,7 @@
                     <h2>{{ apartment.place }}</h2>
                     <div class="card-container">
                         <div>
-                            <p>Description: {{ apartment.description }}</p>
+                            <span><p class="property">Description:</p> {{ apartment.description }}</span>
                             <p>Price: {{ apartment.price }}</p>
                             <p>Area: {{ apartment.area }}</p>
                         </div>

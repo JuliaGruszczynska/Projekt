@@ -79,7 +79,7 @@
             padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
-            height: 50px;
+            height: 80px;
             width: 80px
             text-align: center;
         }
@@ -100,6 +100,10 @@
             align-items: center;
             gap: 10px
         }
+
+        .property {
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
@@ -116,7 +120,7 @@
                 <h2>{{ favourite_apartment.apartament.place }}</h2>
                 <div class="card-container">
                     <div>
-                        <p>Description: {{ favourite_apartment.apartament.description }}</p>
+                        <span><p class="property">Description:</p> {{ favourite_apartment.apartament.description }}</span>
                         <p>Price: {{ favourite_apartment.apartament.price }}</p>
                         <p>Area: {{ favourite_apartment.apartament.area }}</p>
                     </div>
